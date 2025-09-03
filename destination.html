@@ -5,6 +5,10 @@
   <title>Destination Details - Travo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="styles.css" />
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
   <style>
     .destination-detail {
       padding: 30px;
@@ -61,6 +65,15 @@
     .wishlist-btn:hover {
       background: #005d53;
     }
+
+    /* Map styling */
+    #map {
+      height: 400px;
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
@@ -86,9 +99,16 @@
       <p class="rating" id="dest-rating"></p>
       <button class="wishlist-btn" onclick="addToWishlist()">Add to Wishlist</button>
     </div>
+
+    <!-- Map -->
+    <h2 style="margin-top:30px;">Nearby Attractions</h2>
+    <div id="map"></div>
   </main>
 
-  <!-- 🧠 Script to Load Data from localStorage -->
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- 🧠 Script to Load Data + Map -->
   <script>
     const data = JSON.parse(localStorage.getItem('selectedDestination'));
 
@@ -98,6 +118,33 @@
       document.getElementById('dest-image').alt = data.title;
       document.getElementById('dest-desc').textContent = data.description;
       document.getElementById('dest-rating').textContent = `⭐ Rating: ${data.rating}`;
+
+      // Initialize Map at destination coords (default to Goa if not provided)
+      const lat = data.lat || 15.2993;
+      const lng = data.lng || 74.1240;
+
+      const map = L.map('map').setView([lat, lng], 12);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Main marker (destination itself)
+      L.marker([lat, lng]).addTo(map)
+        .bindPopup(`${data.title}`)
+        .openPopup();
+
+      // Example static nearby attractions (replace with real ones per destination)
+      const attractions = [
+        { name: "Baga Beach", coords: [15.5523, 73.7517] },
+        { name: "Aguada Fort", coords: [15.4920, 73.7735] },
+        { name: "Dudhsagar Falls", coords: [15.3146, 74.3147] }
+      ];
+
+      attractions.forEach(place => {
+        L.marker(place.coords).addTo(map).bindPopup(place.name);
+      });
+
     } else {
       document.querySelector('.destination-detail').innerHTML = '<p>Destination details not found.</p>';
     }
