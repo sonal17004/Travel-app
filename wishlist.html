@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wishlist - Travo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+    }
+
+    .top-nav {
+      background-color: #00796b;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 25px;
+      align-items: center;
+    }
+
+    .navbar a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    .wishlist-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .wishlist-title {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 30px;
+    }
+
+    .wishlist-card {
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .wishlist-card img {
+      width: 180px;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .wishlist-info {
+      padding: 20px;
+      flex: 1;
+    }
+
+    .wishlist-info h3 {
+      margin: 0;
+    }
+
+    .wishlist-info p {
+      margin: 6px 0;
+      color: #555;
+    }
+
+    .remove-btn {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      font-size: 0.95em;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .remove-btn:hover {
+      background: #b71c1c;
+    }
+
+    .empty-message {
+      text-align: center;
+      font-size: 1.2em;
+      color: #777;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔝 Top Navigation -->
+  <header class="top-nav">
+    <div class="logo">Travo</div>
+    <nav class="navbar">
+      <a href="index.html">Home</a>
+      <a href="wishlist.html">Wishlist</a>
+      <a href="profile.html">Profile</a>
+    </nav>
+  </header>
+
+  <!-- 📝 Wishlist Section -->
+  <section class="wishlist-container">
+    <h2 class="wishlist-title">Your Wishlist</h2>
+    <div id="wishlist-list"></div>
+    <div class="empty-message" id="empty-msg" style="display: none;">Your wishlist is empty.</div>
+  </section>
+
+  <script>
+    const wishlistData = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+    const fallbackImages = {
+      "GOA, INDIA": "https://images.unsplash.com/photo-1594737625785-c73a5f0a53f4?auto=format&fit=crop&w=600&q=80",
+      "PARIS, FRANCE": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80",
+      "DUBAI, UAE": "https://images.unsplash.com/photo-1608475449108-9c65cbd19e1b?auto=format&fit=crop&w=600&q=80"
+    };
+
+    const listContainer = document.getElementById('wishlist-list');
+    const emptyMsg = document.getElementById('empty-msg');
+
+    function renderWishlist() {
+      listContainer.innerHTML = "";
+      if (wishlistData.length === 0) {
+        emptyMsg.style.display = 'block';
+        return;
+      }
+
+      wishlistData.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'wishlist-card';
+
+        const img = document.createElement('img');
+        img.src = fallbackImages[item.title] || item.image || 'placeholder.jpg';
+        img.alt = item.title;
+
+        const info = document.createElement('div');
+        info.className = 'wishlist-info';
+
+        info.innerHTML = `
+          <h3>${item.title}</h3>
+          <p>${item.description}</p>
+          <p>⭐ ${item.rating}</p>
+        `;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.className = 'remove-btn';
+        removeBtn.onclick = () => removeItem(index);
+
+        info.appendChild(removeBtn);
+        card.appendChild(img);
+        card.appendChild(info);
+        listContainer.appendChild(card);
+      });
+    }
+
+    function removeItem(index) {
+      wishlistData.splice(index, 1);
+      localStorage.setItem('wishlist', JSON.stringify(wishlistData));
+      renderWishlist();
+    }
+
+    renderWishlist();
+  </script>
+</body>
+</html>

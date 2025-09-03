@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Destination Details - Travo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+    }
+
+    .top-nav {
+      background-color: #00796b;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 25px;
+      align-items: center;
+    }
+
+    .navbar a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    .destination-detail {
+      padding: 30px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .detail-header {
+      text-align: center;
+    }
+
+    .detail-image {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .detail-content {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      margin-top: 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .detail-content h2 {
+      margin: 0 0 15px;
+      font-size: 1.8em;
+    }
+
+    .detail-content p {
+      margin-bottom: 12px;
+      line-height: 1.6;
+      font-size: 1.05em;
+      color: #444;
+    }
+
+    .rating {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .wishlist-btn {
+      background: #00796b;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .wishlist-btn:hover {
+      background: #005d53;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔝 Top Navigation -->
+  <header class="top-nav">
+    <div class="logo">Travo</div>
+    <nav class="navbar">
+      <a href="index.html">Home</a>
+      <a href="wishlist.html">Wishlist</a>
+      <a href="profile.html">Profile</a>
+    </nav>
+  </header>
+
+  <!-- 📍 Destination Details -->
+  <main class="destination-detail">
+    <div class="detail-header">
+      <h1 id="dest-title">Loading...</h1>
+      <img id="dest-image" class="detail-image" src="" alt="Destination">
+    </div>
+    <div class="detail-content">
+      <h2 id="dest-heading"></h2>
+      <p id="dest-desc"></p>
+      <p id="dest-more"></p>
+      <p class="rating" id="dest-rating"></p>
+      <button class="wishlist-btn" onclick="addToWishlist()">Add to Wishlist</button>
+    </div>
+  </main>
+
+  <!-- 🧠 JS to load content -->
+  <script>
+    const data = JSON.parse(localStorage.getItem('selectedDestination'));
+
+    const fallbackDetails = {
+      "GOA, INDIA": {
+        image: "https://images.unsplash.com/photo-1594737625785-c73a5f0a53f4?auto=format&fit=crop&w=1200&q=80",
+        fullInfo: "Goa is a coastal paradise in western India known for its golden beaches, vibrant nightlife, Portuguese heritage, seafood cuisine, and music festivals. Top spots include Baga Beach, Fort Aguada, Anjuna Market, and Dudhsagar Falls. Ideal time to visit is Nov–Feb."
+      },
+      "PARIS, FRANCE": {
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80",
+        fullInfo: "Paris, the City of Light, is famed for its art, architecture, and cuisine. Landmarks include the Eiffel Tower, Louvre Museum, Notre-Dame, and Montmartre. Enjoy river cruises, cafes, and romantic strolls. Best visited in spring or fall."
+      },
+      "DUBAI, UAE": {
+        image: "https://images.unsplash.com/photo-1608475449108-9c65cbd19e1b?auto=format&fit=crop&w=1200&q=80",
+        fullInfo: "Dubai offers futuristic skyscrapers, luxury malls, desert safaris, and vibrant nightlife. Must-sees include Burj Khalifa, Dubai Mall, Palm Jumeirah, and the Dubai Fountain. Best time to visit is November to March."
+      }
+    };
+
+    if (data) {
+     const fallback = fallbackDetails[data.title?.toUpperCase()] || {};
+      document.getElementById('dest-title').textContent = data.title;
+      document.getElementById('dest-image').src = fallback.image || data.image;
+      document.getElementById('dest-image').alt = data.title;
+      document.getElementById('dest-heading').textContent = data.title;
+      document.getElementById('dest-desc').textContent = data.description;
+      document.getElementById('dest-more').textContent = fallback.fullInfo || 'More information coming soon.';
+      document.getElementById('dest-rating').textContent = `⭐ Rating: ${data.rating}`;
+    } else {
+      document.querySelector('.destination-detail').innerHTML = '<p>Destination details not found.</p>';
+    }
+
+    function addToWishlist() {
+      let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+      wishlist.push(data);
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      alert(`${data.title} added to wishlist!`);
+    }
+  </script>
+
+</body>
+</html>

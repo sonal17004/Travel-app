@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travo - Home</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="auth-check.js"></script>
+</head>
+<body>
+  <header class="top-nav">
+    <div class="logo">Travo</div>
+    <nav class="navbar">
+      <a href="home.html">Home</a>
+      <a href="wishlist.html">Wishlist</a>
+      <a href="profile.html">Profile</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Find your next adventure!</h1>
+    <input type="text" placeholder="Search destinations...">
+  </section>
+
+  <section class="categories">
+    <div class="category"><img src="mountain.jpg" alt="Mountains"><span>Mountains</span></div>
+    <div class="category"><img src="halfbeach.png" alt="Beaches"><span>Beaches</span></div>
+    <div class="category"><img src="cities.jpg" alt="Cities"><span>Cities</span></div>
+    <div class="category"><img src="nature.jpg" alt="Nature"><span>Nature</span></div>
+  </section>
+
+  <section class="popular">
+    <h2>Top Destinations</h2>
+    <div class="destination-card">
+      <img src="dubai.png" alt="Dubai">
+      <div class="details">
+        <h4>DUBAI, <span>UAE</span></h4>
+        <p>Futuristic skyline and desert charm.</p>
+        <p class="rating">⭐ 4.6</p>
+        <a href="details.html?place=dubai">View More</a>
+      </div>
+    </div>
+    <div class="destination-card">
+      <img src="paris.png" alt="Paris">
+      <div class="details">
+        <h4>PARIS, <span>FRANCE</span></h4>
+        <p>City of lights and romance.</p>
+        <p class="rating">⭐ 4.5</p>
+        <a href="details.html?place=paris">View More</a>
+      </div>
+    </div>
+    <div class="destination-card">
+      <img src="goa.png" alt="Goa">
+      <div class="details">
+        <h4>GOA, <span>INDIA</span></h4>
+        <p>Beach vibes and nightlife.</p>
+        <p class="rating">⭐ 4.2</p>
+        <a href="details.html?place=goa">View More</a>
+      </div>
+    </div>
+  </section>
+
+  <script type="module">
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { app } from './firebase-config.js';
+
+    const auth = getAuth(app);
+
+    window.logout = function () {
+      signOut(auth).then(() => {
+        window.location.href = 'login.html';
+      });
+    };
+  </script>
+</body>
+</html>
