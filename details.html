@@ -10,7 +10,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f8f9fa;
+      background: #f1f5f9;
     }
 
     .top-nav {
@@ -31,115 +31,174 @@
       color: white;
       margin-left: 20px;
       text-decoration: none;
-      font-size: 1em;
     }
 
     .navbar a:hover {
       text-decoration: underline;
     }
 
-    .destination-detail {
-      padding: 30px;
-      max-width: 1000px;
+    main {
+      max-width: 900px;
       margin: auto;
+      padding: 30px;
     }
 
-    .detail-header { text-align: center; margin-bottom: 20px; }
-    .detail-image { width: 100%; max-height: 400px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .detail-content { margin-top: 20px; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .detail-content h2 { margin: 0 0 10px; }
-    .detail-content p { margin-bottom: 12px; font-size: 1.1em; color: #444; }
-    .rating { font-size: 1.2em; margin-bottom: 15px; }
-    .wishlist-btn { background: #00796b; color: white; border: none; padding: 10px 20px; font-size: 1em; border-radius: 6px; cursor: pointer; }
-    .wishlist-btn:hover { background: #005d53; }
-    #map { height: 400px; margin-top: 20px; border-radius: 12px; }
+    .details-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .details-card img {
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+    }
+
+    .details-content {
+      padding: 20px;
+    }
+
+    .details-content h1 {
+      margin: 0 0 10px;
+    }
+
+    .details-content p {
+      margin: 8px 0;
+      color: #555;
+    }
+
+    #map {
+      margin-top: 20px;
+      width: 100%;
+      height: 400px;
+      border-radius: 12px;
+    }
+
+    .nearby {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .nearby h2 {
+      margin: 0 0 10px;
+    }
+
+    .nearby ul {
+      padding: 0;
+      list-style: none;
+    }
+
+    .nearby ul li {
+      padding: 5px 0;
+      border-bottom: 1px solid #ddd;
+    }
   </style>
 </head>
 <body>
-
   <!-- 🔝 Top Navigation -->
   <header class="top-nav">
     <div class="logo">Travo</div>
     <nav class="navbar">
       <a href="index.html">Home</a>
+      <a href="destination.html">Destinations</a>
       <a href="wishlist.html">Wishlist</a>
       <a href="profile.html">Profile</a>
     </nav>
   </header>
 
   <!-- 📍 Destination Details -->
-  <main class="destination-detail">
-    <div class="detail-header">
-      <h1 id="dest-title">Loading...</h1>
+  <main>
+    <div class="details-card">
+      <img id="dest-img" alt="Destination image">
+      <div class="details-content">
+        <h1 id="dest-title"></h1>
+        <p id="dest-desc"></p>
+        <p><strong>⭐ Rating:</strong> <span id="dest-rating"></span></p>
+      </div>
     </div>
-    <img id="dest-image" class="detail-image" src="" alt="Destination Image">
-    <div class="detail-content">
-      <p id="dest-desc"></p>
-      <p class="rating" id="dest-rating"></p>
-      <button class="wishlist-btn" onclick="addToWishlist()">Add to Wishlist</button>
-    </div>
-    <!-- 🗺️ Map -->
+
+    <!-- Leaflet Map -->
     <div id="map"></div>
+
+    <!-- Nearby Places -->
+    <div class="nearby">
+      <h2>Nearby Places</h2>
+      <ul id="nearby-list">
+        <li>Loading nearby places...</li>
+      </ul>
+    </div>
   </main>
 
-  <!-- 🧠 Scripts -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
-    const data = JSON.parse(localStorage.getItem('selectedDestination'));
+    // Load destination from localStorage
+    const dest = JSON.parse(localStorage.getItem("selectedDestination"));
 
-    if (data) {
-      document.getElementById('dest-title').textContent = data.title;
-      document.getElementById('dest-image').src = data.image;
-      document.getElementById('dest-image').alt = data.title;
-      document.getElementById('dest-desc').textContent = data.description;
-      document.getElementById('dest-rating').textContent = `⭐ Rating: ${data.rating}`;
+    if (!dest) {
+      document.querySelector("main").innerHTML = "<p>No destination selected.</p>";
+    } else {
+      document.getElementById("dest-img").src = dest.image;
+      document.getElementById("dest-title").innerText = dest.title;
+      document.getElementById("dest-desc").innerText = dest.description;
+      document.getElementById("dest-rating").innerText = dest.rating;
 
-      // 🌍 Initialize Leaflet Map
-      const map = L.map('map').setView([data.lat, data.lng], 12);
+      // Initialize Leaflet map
+      const map = L.map('map').setView([dest.lat, dest.lng], 13);
 
+      // Free OpenStreetMap tiles
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+        attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      L.marker([data.lat, data.lng]).addTo(map)
-        .bindPopup(`<b>${data.title}</b><br>${data.description}`).openPopup();
-    } else {
-      document.querySelector('.destination-detail').innerHTML = '<p>Destination details not found.</p>';
-    }
+      // Add main marker
+      L.marker([dest.lat, dest.lng]).addTo(map)
+        .bindPopup(dest.title)
+        .openPopup();
 
-    function addToWishlist() {
-      let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-      wishlist.push(data);
-      localStorage.setItem('wishlist', JSON.stringify(wishlist));
-      alert(`${data.title} added to wishlist!`);
+      // Fetch nearby places using Overpass API
+      const query = `
+        [out:json];
+        (
+          node["amenity"~"restaurant|cafe|hotel|bar|fast_food|attraction"](around:1500,${dest.lat},${dest.lng});
+        );
+        out;
+      `;
+      const url = "https://overpass-api.de/api/interpreter?data=" + encodeURIComponent(query);
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById("nearby-list");
+          list.innerHTML = "";
+
+          if (data.elements.length === 0) {
+            list.innerHTML = "<li>No nearby places found.</li>";
+          } else {
+            data.elements.forEach(place => {
+              const name = place.tags.name || "Unnamed place";
+              const type = place.tags.amenity || "Place";
+
+              // Add to list
+              const li = document.createElement("li");
+              li.textContent = `${name} (${type})`;
+              list.appendChild(li);
+
+              // Add marker to map
+              L.marker([place.lat, place.lon]).addTo(map)
+                .bindPopup(`${name} (${type})`);
+            });
+          }
+        })
+        .catch(err => {
+          document.getElementById("nearby-list").innerHTML = "<li>Failed to load nearby places.</li>";
+          console.error(err);
+        });
     }
   </script>
 </body>
-    <!-- your normal scripts -->
-  <script src="script.js"></script>
-
-  <!-- 🚫 Auth Guard -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-      }
-    });
-  </script>
 </html>
-
