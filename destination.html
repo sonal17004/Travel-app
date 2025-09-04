@@ -1,83 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Destination Details - Travo</title>
+  <meta charset="UTF-8">
+  <title>Destinations - Travo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css" />
-  
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
+  <link rel="stylesheet" href="styles.css">
   <style>
-    .destination-detail {
-      padding: 30px;
-      max-width: 1000px;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #00796b;
+      padding: 15px 30px;
+      color: white;
+    }
+
+    .top-nav .logo {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .navbar a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 1em;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 1200px;
       margin: auto;
     }
 
-    .detail-header {
+    h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      color: #333;
     }
 
-    .detail-image {
-      width: 100%;
-      max-height: 400px;
-      object-fit: cover;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    .dest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
     }
 
-    .detail-content {
-      margin-top: 20px;
+    .dest-card {
       background: #fff;
-      padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
     }
 
-    .detail-content h2 {
-      margin: 0 0 10px;
+    .dest-card:hover {
+      transform: translateY(-5px);
     }
 
-    .detail-content p {
-      margin-bottom: 12px;
-      font-size: 1.1em;
-      color: #444;
-    }
-
-    .rating {
-      font-size: 1.2em;
-      margin-bottom: 15px;
-    }
-
-    .wishlist-btn {
-      background: #00796b;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1em;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .wishlist-btn:hover {
-      background: #005d53;
-    }
-
-    /* Map styling */
-    #map {
-      height: 400px;
+    .dest-card img {
       width: 100%;
-      border-radius: 12px;
-      margin-top: 25px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .dest-card h3 {
+      margin: 15px 0 5px;
+      padding: 0 15px;
+      font-size: 1.2em;
+      color: #00796b;
+    }
+
+    .dest-card p {
+      padding: 0 15px;
+      font-size: 0.95em;
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    .view-btn {
+      display: inline-block;
+      margin: 10px 15px 15px;
+      padding: 8px 16px;
+      background: #00796b;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .view-btn:hover {
+      background: #005d53;
     }
   </style>
 </head>
 <body>
-
   <!-- 🔝 Top Navigation -->
   <header class="top-nav">
     <div class="logo">Travo</div>
@@ -88,74 +114,40 @@
     </nav>
   </header>
 
-  <!-- 📍 Destination Details -->
-  <main class="destination-detail">
-    <div class="detail-header">
-      <h1 id="dest-title">Loading...</h1>
-    </div>
-    <img id="dest-image" class="detail-image" src="" alt="Destination Image">
-    <div class="detail-content">
-      <p id="dest-desc"></p>
-      <p class="rating" id="dest-rating"></p>
-      <button class="wishlist-btn" onclick="addToWishlist()">Add to Wishlist</button>
-    </div>
-
-    <!-- Map -->
-    <h2 style="margin-top:30px;">Nearby Attractions</h2>
-    <div id="map"></div>
+  <!-- 📍 Destination Listing -->
+  <main>
+    <h1>Explore Destinations</h1>
+    <div class="dest-grid" id="dest-list"></div>
   </main>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-  <!-- 🧠 Script to Load Data + Map -->
+  <!-- 🧠 Script -->
   <script>
-    const data = JSON.parse(localStorage.getItem('selectedDestination'));
+    const destinations = [
+      { title: "Goa", image: "images/goa.jpg", description: "Sunny beaches and nightlife.", rating: "4.6", lat: 15.2993, lng: 74.1240 },
+      { title: "Manali", image: "images/manali.jpg", description: "Snowy mountains and adventures.", rating: "4.7", lat: 32.2432, lng: 77.1892 },
+      { title: "Paris", image: "images/paris.jpg", description: "The city of lights.", rating: "4.9", lat: 48.8566, lng: 2.3522 },
+      { title: "Bali", image: "images/bali.jpg", description: "Island paradise with temples & beaches.", rating: "4.8", lat: -8.3405, lng: 115.0920 },
+      { title: "New York", image: "images/nyc.jpg", description: "The Big Apple, city that never sleeps.", rating: "4.7", lat: 40.7128, lng: -74.0060 },
+      { title: "Tokyo", image: "images/tokyo.jpg", description: "High-tech meets tradition.", rating: "4.9", lat: 35.6895, lng: 139.6917 }
+    ];
 
-    if (data) {
-      document.getElementById('dest-title').textContent = data.title;
-      document.getElementById('dest-image').src = data.image;
-      document.getElementById('dest-image').alt = data.title;
-      document.getElementById('dest-desc').textContent = data.description;
-      document.getElementById('dest-rating').textContent = `⭐ Rating: ${data.rating}`;
+    const list = document.getElementById("dest-list");
 
-      // Initialize Map at destination coords (default to Goa if not provided)
-      const lat = data.lat || 15.2993;
-      const lng = data.lng || 74.1240;
+    destinations.forEach(dest => {
+      const card = document.createElement("div");
+      card.className = "dest-card";
+      card.innerHTML = `
+        <img src="${dest.image}" alt="${dest.title}">
+        <h3>${dest.title}</h3>
+        <p>${dest.description}</p>
+        <a class="view-btn" href="details.html" onclick='selectDestination(${JSON.stringify(dest)})'>View Details</a>
+      `;
+      list.appendChild(card);
+    });
 
-      const map = L.map('map').setView([lat, lng], 12);
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(map);
-
-      // Main marker (destination itself)
-      L.marker([lat, lng]).addTo(map)
-        .bindPopup(`${data.title}`)
-        .openPopup();
-
-      // Example static nearby attractions (replace with real ones per destination)
-      const attractions = [
-        { name: "Baga Beach", coords: [15.5523, 73.7517] },
-        { name: "Aguada Fort", coords: [15.4920, 73.7735] },
-        { name: "Dudhsagar Falls", coords: [15.3146, 74.3147] }
-      ];
-
-      attractions.forEach(place => {
-        L.marker(place.coords).addTo(map).bindPopup(place.name);
-      });
-
-    } else {
-      document.querySelector('.destination-detail').innerHTML = '<p>Destination details not found.</p>';
-    }
-
-    function addToWishlist() {
-      let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-      wishlist.push(data);
-      localStorage.setItem('wishlist', JSON.stringify(wishlist));
-      alert(`${data.title} added to wishlist!`);
+    function selectDestination(dest) {
+      localStorage.setItem("selectedDestination", JSON.stringify(dest));
     }
   </script>
-
 </body>
 </html>
