@@ -7,92 +7,99 @@
   <link rel="stylesheet" href="styles.css" />
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
       margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
     }
 
     .top-nav {
-      background-color: #00796b;
-      color: white;
       display: flex;
       justify-content: space-between;
-      padding: 15px 25px;
       align-items: center;
+      background: #00796b;
+      padding: 15px 30px;
+      color: white;
+    }
+
+    .top-nav .logo {
+      font-size: 1.5em;
+      font-weight: bold;
     }
 
     .navbar a {
       color: white;
       margin-left: 20px;
       text-decoration: none;
+      font-size: 1em;
     }
 
     .navbar a:hover {
       text-decoration: underline;
     }
 
-    .wishlist-container {
+    main {
+      padding: 30px;
       max-width: 1000px;
-      margin: 40px auto;
-      padding: 0 20px;
+      margin: auto;
     }
 
-    .wishlist-title {
+    h1 {
       text-align: center;
-      font-size: 2em;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+    }
+
+    .wishlist-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
     }
 
     .wishlist-card {
-      display: flex;
-      align-items: center;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .wishlist-card:hover {
+      transform: translateY(-5px);
     }
 
     .wishlist-card img {
-      width: 180px;
-      height: 140px;
+      width: 100%;
+      height: 180px;
       object-fit: cover;
     }
 
-    .wishlist-info {
-      padding: 20px;
-      flex: 1;
+    .card-body {
+      padding: 15px;
     }
 
-    .wishlist-info h3 {
-      margin: 0;
+    .card-body h3 {
+      margin: 0 0 10px;
+      font-size: 1.2em;
     }
 
-    .wishlist-info p {
-      margin: 6px 0;
+    .card-body p {
+      margin: 0 0 10px;
+      font-size: 0.95em;
       color: #555;
     }
 
     .remove-btn {
-      background: #d32f2f;
+      background: #e63946;
       color: white;
       border: none;
-      padding: 8px 15px;
-      font-size: 0.95em;
-      border-radius: 5px;
+      padding: 8px 12px;
+      font-size: 0.9em;
+      border-radius: 6px;
       cursor: pointer;
-      margin-top: 10px;
     }
 
     .remove-btn:hover {
-      background: #b71c1c;
-    }
-
-    .empty-message {
-      text-align: center;
-      font-size: 1.2em;
-      color: #777;
-      margin-top: 50px;
+      background: #b91c1c;
     }
   </style>
 </head>
@@ -108,64 +115,55 @@
     </nav>
   </header>
 
-  <!-- 📝 Wishlist Section -->
-  <section class="wishlist-container">
-    <h2 class="wishlist-title">Your Wishlist</h2>
-    <div id="wishlist-list"></div>
-    <div class="empty-message" id="empty-msg" style="display: none;">Your wishlist is empty.</div>
-  </section>
+  <!-- 💖 Wishlist -->
+  <main>
+    <h1>My Wishlist</h1>
+    <div class="wishlist-container" id="wishlist-container">
+      <!-- Items will load here -->
+    </div>
+  </main>
 
   <script>
-    const wishlistData = JSON.parse(localStorage.getItem('wishlist')) || [];
-
-    const fallbackImages = {
-      "GOA, INDIA": "https://images.unsplash.com/photo-1594737625785-c73a5f0a53f4?auto=format&fit=crop&w=600&q=80",
-      "PARIS, FRANCE": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80",
-      "DUBAI, UAE": "https://images.unsplash.com/photo-1608475449108-9c65cbd19e1b?auto=format&fit=crop&w=600&q=80"
-    };
-
-    const listContainer = document.getElementById('wishlist-list');
-    const emptyMsg = document.getElementById('empty-msg');
+    const container = document.getElementById('wishlist-container');
+    let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
 
     function renderWishlist() {
-      listContainer.innerHTML = "";
-      if (wishlistData.length === 0) {
-        emptyMsg.style.display = 'block';
+      container.innerHTML = '';
+
+      if (wishlist.length === 0) {
+        container.innerHTML = '<p style="text-align:center;">Your wishlist is empty.</p>';
         return;
       }
 
-      wishlistData.forEach((item, index) => {
+      wishlist.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'wishlist-card';
 
-        const img = document.createElement('img');
-        img.src = fallbackImages[item.title] || item.image || 'placeholder.jpg';
-        img.alt = item.title;
-
-        const info = document.createElement('div');
-        info.className = 'wishlist-info';
-
-        info.innerHTML = `
-          <h3>${item.title}</h3>
-          <p>${item.description}</p>
-          <p>⭐ ${item.rating}</p>
+        card.innerHTML = `
+          <img src="${item.image}" alt="${item.title}">
+          <div class="card-body">
+            <h3>${item.title}</h3>
+            <p>⭐ ${item.rating}</p>
+            <button class="remove-btn" onclick="removeFromWishlist(${index}, event)">Remove</button>
+          </div>
         `;
 
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove';
-        removeBtn.className = 'remove-btn';
-        removeBtn.onclick = () => removeItem(index);
+        // 📍 Clicking card opens details.html
+        card.addEventListener('click', (e) => {
+          if (!e.target.classList.contains('remove-btn')) {
+            localStorage.setItem('selectedDestination', JSON.stringify(item));
+            window.location.href = 'details.html';
+          }
+        });
 
-        info.appendChild(removeBtn);
-        card.appendChild(img);
-        card.appendChild(info);
-        listContainer.appendChild(card);
+        container.appendChild(card);
       });
     }
 
-    function removeItem(index) {
-      wishlistData.splice(index, 1);
-      localStorage.setItem('wishlist', JSON.stringify(wishlistData));
+    function removeFromWishlist(index, event) {
+      event.stopPropagation(); // prevent triggering card click
+      wishlist.splice(index, 1);
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
       renderWishlist();
     }
 
