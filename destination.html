@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Destinations - Travo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f8f9fa;
+      background: #f1f5f9;
     }
 
     .top-nav {
@@ -30,7 +30,6 @@
       color: white;
       margin-left: 20px;
       text-decoration: none;
-      font-size: 1em;
     }
 
     .navbar a:hover {
@@ -38,28 +37,23 @@
     }
 
     main {
-      padding: 20px;
+      padding: 30px;
       max-width: 1200px;
       margin: auto;
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #333;
-    }
-
     .dest-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
     }
 
     .dest-card {
-      background: #fff;
+      background: white;
       border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       overflow: hidden;
+      cursor: pointer;
       transition: transform 0.2s;
     }
 
@@ -73,33 +67,17 @@
       object-fit: cover;
     }
 
-    .dest-card h3 {
-      margin: 15px 0 5px;
-      padding: 0 15px;
-      font-size: 1.2em;
-      color: #00796b;
+    .dest-info {
+      padding: 15px;
     }
 
-    .dest-card p {
-      padding: 0 15px;
-      font-size: 0.95em;
-      color: #444;
-      margin-bottom: 10px;
+    .dest-info h3 {
+      margin: 0 0 8px;
     }
 
-    .view-btn {
-      display: inline-block;
-      margin: 10px 15px 15px;
-      padding: 8px 16px;
-      background: #00796b;
-      color: #fff;
-      border-radius: 6px;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-
-    .view-btn:hover {
-      background: #005d53;
+    .dest-info p {
+      margin: 0;
+      color: #555;
     }
   </style>
 </head>
@@ -109,72 +87,89 @@
     <div class="logo">Travo</div>
     <nav class="navbar">
       <a href="index.html">Home</a>
+      <a href="destination.html">Destinations</a>
       <a href="wishlist.html">Wishlist</a>
       <a href="profile.html">Profile</a>
     </nav>
   </header>
 
-  <!-- 📍 Destination Listing -->
+  <!-- 📍 Destinations -->
   <main>
     <h1>Explore Destinations</h1>
-    <div class="dest-grid" id="dest-list"></div>
+    <div class="dest-grid" id="dest-grid"></div>
   </main>
 
-  <!-- 🧠 Script -->
   <script>
+    // Sample destinations
     const destinations = [
-      { title: "Goa", image: "images/goa.jpg", description: "Sunny beaches and nightlife.", rating: "4.6", lat: 15.2993, lng: 74.1240 },
-      { title: "Manali", image: "images/manali.jpg", description: "Snowy mountains and adventures.", rating: "4.7", lat: 32.2432, lng: 77.1892 },
-      { title: "Paris", image: "images/paris.jpg", description: "The city of lights.", rating: "4.9", lat: 48.8566, lng: 2.3522 },
-      { title: "Bali", image: "images/bali.jpg", description: "Island paradise with temples & beaches.", rating: "4.8", lat: -8.3405, lng: 115.0920 },
-      { title: "New York", image: "images/nyc.jpg", description: "The Big Apple, city that never sleeps.", rating: "4.7", lat: 40.7128, lng: -74.0060 },
-      { title: "Tokyo", image: "images/tokyo.jpg", description: "High-tech meets tradition.", rating: "4.9", lat: 35.6895, lng: 139.6917 }
+      {
+        title: "Goa, India",
+        description: "Sunny beaches, nightlife, and laid-back vibes.",
+        image: "https://images.unsplash.com/photo-1548013146-72479768bada",
+        rating: "4.6",
+        lat: 15.2993,
+        lng: 74.1240
+      },
+      {
+        title: "Paris, France",
+        description: "The city of lights, romance, and the Eiffel Tower.",
+        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34",
+        rating: "4.8",
+        lat: 48.8566,
+        lng: 2.3522
+      },
+      {
+        title: "Bali, Indonesia",
+        description: "Tropical paradise with temples, rice terraces, and beaches.",
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+        rating: "4.7",
+        lat: -8.3405,
+        lng: 115.0920
+      },
+      {
+        title: "New York, USA",
+        description: "The city that never sleeps, skyscrapers and culture.",
+        image: "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca",
+        rating: "4.5",
+        lat: 40.7128,
+        lng: -74.0060
+      },
+      {
+        title: "Tokyo, Japan",
+        description: "A blend of tradition, technology, and neon streets.",
+        image: "https://images.unsplash.com/photo-1549692520-acc6669e2f0c",
+        rating: "4.9",
+        lat: 35.6762,
+        lng: 139.6503
+      },
+      {
+        title: "Dubai, UAE",
+        description: "Luxury, skyscrapers, and desert adventures.",
+        image: "https://images.unsplash.com/photo-1504274066651-8d31a536b11a",
+        rating: "4.4",
+        lat: 25.2048,
+        lng: 55.2708
+      }
     ];
 
-    const list = document.getElementById("dest-list");
+    const grid = document.getElementById("dest-grid");
 
     destinations.forEach(dest => {
       const card = document.createElement("div");
       card.className = "dest-card";
       card.innerHTML = `
         <img src="${dest.image}" alt="${dest.title}">
-        <h3>${dest.title}</h3>
-        <p>${dest.description}</p>
-        <a class="view-btn" href="details.html" onclick='selectDestination(${JSON.stringify(dest)})'>View Details</a>
+        <div class="dest-info">
+          <h3>${dest.title}</h3>
+          <p>⭐ ${dest.rating}</p>
+        </div>
       `;
-      list.appendChild(card);
+      card.addEventListener("click", () => {
+        localStorage.setItem("selectedDestination", JSON.stringify(dest));
+        window.location.href = "details.html";
+      });
+      grid.appendChild(card);
     });
-
-    function selectDestination(dest) {
-      localStorage.setItem("selectedDestination", JSON.stringify(dest));
-    }
   </script>
 </body>
-    <!-- your normal scripts -->
-  <script src="script.js"></script>
-
-  <!-- 🚫 Auth Guard -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-      }
-    });
-  </script>
 </html>
-
