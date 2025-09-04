@@ -202,5 +202,20 @@
   </script>
   <button id="wishlist-btn">➕ Add to Wishlist</button>
 </body>
+  <script>// Wishlist button
+document.getElementById("wishlist-btn").addEventListener("click", () => {
+  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+  // Prevent duplicates
+  if (!wishlist.some(item => item.title === dest.title)) {
+    wishlist.push(dest);
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    alert(`${dest.title} added to wishlist!`);
+  } else {
+    alert(`${dest.title} is already in your wishlist.`);
+  }
+});
+</script>
 </html>
+
 
