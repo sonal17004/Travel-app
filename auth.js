@@ -8,12 +8,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+ apiKey: "AIzaSyCLXMtlmSjjUyPqGPl67nQ-D6SZHVzhsaI",
+  authDomain: "my-travel-app-8df4e.firebaseapp.com",
+  projectId: "my-travel-app-8df4e",
+  storageBucket: "my-travel-app-8df4e.firebasestorage.app",
+  messagingSenderId: "883756429136",
+  appId: "1:883756429136:web:4b813e1d42ee6db4adc655",
+  measurementId: "G-3X2MMQ760C"
 };
 
 // Init Firebase
